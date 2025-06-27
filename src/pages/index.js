@@ -1,11 +1,20 @@
 import * as React from "react"
 import { Link, graphql } from "gatsby"
+import styled from "styled-components"
 import { StaticImage } from "gatsby-plugin-image"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 import * as styles from "../components/index.module.css"
 
+const BlogLink = styled(Link)`
+  text-decoration: none;
+  color: blue;
+`
+
+const BlogTitle = styled.h3`
+  margin-bottom: 20px;
+`
 const links = [
   {
     text: "Tutorial",
@@ -80,7 +89,9 @@ const IndexPage = ({ data }) => {
       {
         data.allMarkdownRemark.edges.map(({node}) => (
           <div key={node.id}>
-            <span>{node.frontmatter.title} - { node.frontmatter.date }</span>
+            <BlogLink to={node.fields.slug}>
+              <BlogTitle>{node.frontmatter.title} - { node.frontmatter.date }</BlogTitle>
+            </BlogLink>
             <p>{ node.excerpt }</p>
           </div>
         ))
@@ -145,7 +156,7 @@ export default IndexPage
 
 export const query = graphql`
   query {
-    allMarkdownRemark {
+    allMarkdownRemark(sort: { frontmatter: { date: DESC } }) {
       edges {
         node {
           id
@@ -154,6 +165,9 @@ export const query = graphql`
             description
             date(locale: "")
             title
+          }
+          fields {
+            slug
           }
         }
       }
